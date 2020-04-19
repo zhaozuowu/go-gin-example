@@ -201,6 +201,7 @@ func (userController *UserController) Show(ctx *gin.Context) {
 	userInfo, err := userModel.GetUserInfoById(id)
 	result["data"] = userInfo
 	result["err"] = err
+	result["debug"] = "debug2"
 	ctx.JSON(200, result)
 	return
 

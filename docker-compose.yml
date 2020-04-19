@@ -1,0 +1,36 @@
+version: '3.3'
+services:
+  go-gin-blog:
+    depends_on:
+      - go-gin-mysql
+    container_name: gin-blog-docker
+    #image: gin_go-gin-blog
+    build: ./
+    ports:
+      - 8312:8312
+    networks:
+      - go-gin-blog
+    volumes:
+    - .:/working
+    entrypoint: /bin/bash -c "CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /working/gin-blog-api /working/main.go && /working/gin-blog-api"
+  go-gin-mysql:
+    image: mysql:5.7
+    container_name: go-gin-mysql
+    ports:
+      - 3307:3306
+    networks:
+      - go-gin-blog
+    volumes:
+      - ./db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_USER: "test"
+      MYSQL_PASSWORD: "403132804"
+      MYSQL_DATABASE: "gin"
+      MYSQL_ROOT_PASSWORD: "403132804"
+#    volumes:
+#      - .:/working/
+#    command: go build /working/main.go
+#    entrypoint: /working/main
+networks:
+  go-gin-blog:

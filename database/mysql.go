@@ -22,10 +22,12 @@ func (mysql *Mysql) InitConnect() *gorm.DB {
 	dbUser := sec.Key("USER").String()
 	dbPassword := sec.Key("PASSWORD").String()
 	dbName := sec.Key("DATABASE").String()
+	host := sec.Key("HOST").String()
 
-	db, err := gorm.Open(dbType, fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local",
+	db, err := gorm.Open(dbType, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
 		dbUser,
 		dbPassword,
+		host,
 		dbName,
 	))
 
