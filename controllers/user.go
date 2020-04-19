@@ -22,16 +22,13 @@ type Result struct {
 	Data    interface{} `json:"data"`
 }
 
-// @Summary 用户列表
-// @Id 1
-// @Tags 用户中心
-// @version 1.0
-// @Accept application/json
-// @Param name body string  true "Name"
-// @Param email body string  true "Email"
-// @Param page query string false "Page"
-// @Success 200 object controllers.Result
-// @Router /users/ [get]
+// @Summary Get multiple articles
+// @Produce  json
+// @Param tag_id body int false "TagID"
+// @Param state body int false "State"
+// @Param created_by body int false "CreatedBy"
+// @Success 200 {object} controllers.Result
+// @Router /api/v1/articles [get]
 func (userController *UserController) Index(ctx *gin.Context) {
 
 	requstParams := make(map[string]interface{})
