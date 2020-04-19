@@ -15,35 +15,83 @@ info:
   description: An example of gin
   license:
     name: MIT
-    url: https://github.com/EDDYCJY/go-gin-example/blob/master/LICENSE
-  termsOfService: https://github.com/EDDYCJY/go-gin-example
+    url: https://github.com/zhaozuowu/go-gin-example/blob/master/LICENSE
+  termsOfService: https://github.com/zhaozuowu/go-gin-example
   title: Golang Gin API
   version: "1.0"
 paths:
-  /api/v1/articles:
+  /users/:
     get:
-      parameters:
-      - description: TagID
-        in: body
-        name: tag_id
-        schema:
-          type: integer
-      - description: State
-        in: body
-        name: state
-        schema:
-          type: integer
-      - description: CreatedBy
-        in: body
-        name: created_by
-        schema:
-          type: integer
-      produces:
+      consumes:
       - application/json
+      operationId: "1"
+      parameters:
+      - description: Name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: Email
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: Page
+        in: query
+        name: page
+        type: string
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/controllers.Result'
-      summary: Get multiple articles
+      summary: 用户列表
+      tags:
+      - 用户中心
+    post:
+      consumes:
+      - application/json
+      operationId: "1"
+      parameters:
+      - description: Name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: Email
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.Result'
+      summary: 用户注册接口
+      tags:
+      - 用户中心
+  /users/:id:
+    get:
+      consumes:
+      - application/json
+      operationId: "1"
+      parameters:
+      - description: Id
+        in: query
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.Result'
+      summary: 获取用户信息
+      tags:
+      - 用户中心
 swagger: "2.0"

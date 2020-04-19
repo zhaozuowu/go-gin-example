@@ -7,6 +7,7 @@ import (
 	"github.com/gin2/pkg/setting"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	_ "github.com/gin2/docs"
 )
 
 type UserRoute struct {

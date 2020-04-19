@@ -22,13 +22,16 @@ type Result struct {
 	Data    interface{} `json:"data"`
 }
 
-// @Summary Get multiple articles
-// @Produce  json
-// @Param tag_id body int false "TagID"
-// @Param state body int false "State"
-// @Param created_by body int false "CreatedBy"
-// @Success 200 {object} controllers.Result
-// @Router /api/v1/articles [get]
+// @Summary 用户列表
+// @Id 1
+// @Tags 用户中心
+// @version 1.0
+// @Accept application/json
+// @Param name body string  true "Name"
+// @Param email body string  true "Email"
+// @Param page query string false "Page"
+// @Success 200 object controllers.Result
+// @Router /users/ [get]
 func (userController *UserController) Index(ctx *gin.Context) {
 
 	requstParams := make(map[string]interface{})
@@ -90,6 +93,15 @@ func (userController *UserController) Index(ctx *gin.Context) {
 
 }
 
+// @Summary 用户注册接口
+// @Id 1
+// @Tags 用户中心
+// @version 1.0
+// @Accept application/json
+// @Param name body string  true "Name"
+// @Param email body string  true "Email"
+// @Success 200 object controllers.Result
+// @Router /users/ [post]
 func (userController *UserController) Store(ctx *gin.Context) {
 
 	var userRequst request.UserListRequst
@@ -158,6 +170,14 @@ func (userController *UserController) Store(ctx *gin.Context) {
 
 }
 
+// @Summary 获取用户信息
+// @Id 1
+// @Tags 用户中心
+// @version 1.0
+// @Accept application/json
+// @Param id query int  true "Id"
+// @Success 200 object controllers.Result
+// @Router /users/:id [get]
 func (userController *UserController) Show(ctx *gin.Context) {
 
 	id := com.StrTo(ctx.Param("id")).MustInt()

@@ -3,45 +3,116 @@
     "info": {
         "description": "An example of gin",
         "title": "Golang Gin API",
-        "termsOfService": "https://github.com/EDDYCJY/go-gin-example",
+        "termsOfService": "https://github.com/zhaozuowu/go-gin-example",
         "contact": {},
         "license": {
             "name": "MIT",
-            "url": "https://github.com/EDDYCJY/go-gin-example/blob/master/LICENSE"
+            "url": "https://github.com/zhaozuowu/go-gin-example/blob/master/LICENSE"
         },
         "version": "1.0"
     },
     "paths": {
-        "/api/v1/articles": {
+        "/users/": {
             "get": {
-                "produces": [
+                "consumes": [
                     "application/json"
                 ],
-                "summary": "Get multiple articles",
+                "tags": [
+                    "用户中心"
+                ],
+                "summary": "用户列表",
+                "operationId": "1",
                 "parameters": [
                     {
-                        "description": "TagID",
-                        "name": "tag_id",
+                        "description": "Name",
+                        "name": "name",
                         "in": "body",
+                        "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
-                        "description": "State",
-                        "name": "state",
+                        "description": "Email",
+                        "name": "email",
                         "in": "body",
+                        "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
-                        "description": "CreatedBy",
-                        "name": "created_by",
-                        "in": "body",
+                        "type": "string",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "type": "integer"
+                            "$ref": "#/definitions/controllers.Result"
                         }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户中心"
+                ],
+                "summary": "用户注册接口",
+                "operationId": "1",
+                "parameters": [
+                    {
+                        "description": "Name",
+                        "name": "name",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Email",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/:id": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户中心"
+                ],
+                "summary": "获取用户信息",
+                "operationId": "1",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
