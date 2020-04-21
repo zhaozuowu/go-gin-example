@@ -14,6 +14,11 @@ var (
 	RunMode      string
 	PageSize     int
 	JwtSecret    string
+	RedisHost    string
+	RedisPassword   string
+	RedisMaxIdle     int
+	RedisMaxActive   int
+	RedisIdleTimeout  time.Duration
 )
 
 func init() {
@@ -27,7 +32,20 @@ func init() {
 	LoadBase()
 	LoadServer()
 	LoadApp()
+	LoadRedis()
 
+}
+
+func LoadRedis() {
+
+	sec, err := Cfg.GetSection("redis")
+
+	if err != nil {
+		log.Fatalf("Fail to get section  'redis':%v\n", err)
+	}
+
+	PageSize = sec.Key("PAGE_SIZE").MustInt(10)
+	JwtSecret = sec.Key("JWT_SECRET").MustString("23347$040412")
 }
 
 func LoadApp() {
@@ -38,8 +56,11 @@ func LoadApp() {
 		log.Fatalf("Fail to get section  'app':%v\n", err)
 	}
 
-	PageSize = sec.Key("PAGE_SIZE").MustInt(10)
-	JwtSecret = sec.Key("JWT_SECRET").MustString("23347$040412")
+	RedisHost = sec.Key("Host").MustString("127.0.0.1:6379")
+	RedisPassword = sec.Key("Password").MustString("")
+	RedisMaxIdle = sec.Key("MaxIdle").MustInt(30)
+	RedisMaxActive = sec.Key("MaxActive").MustInt(60)
+	RedisIdleTimeout = time.Duration(sec.Key("IdleTimeout").MustInt(120)) * time.Second
 }
 
 func LoadServer() {

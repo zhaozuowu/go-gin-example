@@ -8,6 +8,7 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fvbock/endless v0.0.0-20170109170031-447134032cb6 // indirect
+	github.com/garyburd/redigo v1.6.0
 	github.com/gin-gonic/gin v1.6.2
 	github.com/go-ini/ini v1.55.0
 	github.com/go-openapi/spec v0.19.7 // indirect
@@ -15,6 +16,7 @@ require (
 	github.com/golang/protobuf v1.4.0 // indirect
 	github.com/jinzhu/gorm v1.9.12
 	github.com/mailru/easyjson v0.7.1 // indirect
+	github.com/robfig/cron v1.2.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.5

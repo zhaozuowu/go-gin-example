@@ -1,15 +1,20 @@
 package controllers
 
 import (
+	"encoding/json"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/gin2/models"
 	error2 "github.com/gin2/pkg/error"
+	"github.com/gin2/pkg/logging"
+	"github.com/gin2/pkg/redis"
 	"github.com/gin2/pkg/setting"
 	"github.com/gin2/request"
 	"github.com/gin2/service"
 	"github.com/unknwon/com"
 	"log"
+	"strconv"
+	"strings"
 )
 
 type UserController struct {
@@ -51,37 +56,69 @@ func (userController *UserController) Index(ctx *gin.Context) {
 	requstParams["name"] = userRequest.Name
 	requstParams["email"] = userRequest.Email
 
-	userModel := models.NewUserModel()
 	offset := 0
 	offset = (page - 1) * setting.PageSize
 	if offset < 0 {
 		offset = 0
 	}
-
-	userList, err := userModel.GetUserList(offset, setting.PageSize, requstParams)
-	if err != nil {
-		code := error2.ERROR
-		ctx.JSON(code, gin.H{
-			"code":  code,
-			"data":  "",
-			"error": err.Error(),
-			"msg":   error2.GetErrorMsg(code),
-		})
-		return
+	keys := []string{
+		error2.CACHE_USER_LIST,
+		"list",
 	}
 
-	total, err := userModel.GetUserTotalNum(requstParams)
-	if err != nil {
-		code := error2.ERROR
-		ctx.JSON(code, gin.H{
-			"code":  code,
-			"data":  "",
-			"error": err.Error(),
-			"msg":   error2.GetErrorMsg(code),
-		})
-		return
+	if userRequest.Name != "" {
+		keys = append(keys, userRequest.Name)
 	}
 
+	if userRequest.Email != "" {
+		keys = append(keys, userRequest.Email)
+	}
+
+	if page > 0 {
+		keys = append(keys, strconv.Itoa(page))
+	}
+
+	redisKey := strings.Join(keys, "_")
+
+	cacheResult, err := redis.Get(redisKey)
+
+	if err != nil {
+
+	}
+	var userList []models.User
+	var total int
+
+	err =  json.Unmarshal(cacheResult,&userList)
+
+	logging.Info("userList:",userList)
+	if userList == nil {
+		userModel := models.NewUserModel()
+		userList, err = userModel.GetUserList(offset, setting.PageSize, requstParams)
+		cacheValue ,err := json.Marshal(userList)
+		redis.Set(redisKey,cacheValue,0)
+		if err != nil {
+			code := error2.ERROR
+			ctx.JSON(code, gin.H{
+				"code":  code,
+				"data":  "",
+				"error": err.Error(),
+				"msg":   error2.GetErrorMsg(code),
+			})
+			return
+		}
+		total, err = userModel.GetUserTotalNum(requstParams)
+		if err != nil {
+			code := error2.ERROR
+			ctx.JSON(code, gin.H{
+				"code":  code,
+				"data":  "",
+				"error": err.Error(),
+				"msg":   error2.GetErrorMsg(code),
+			})
+			return
+		}
+
+	}
 	code := error2.SUCCESS
 	data["userList"] = userList
 	data["total"] = total
@@ -89,6 +126,7 @@ func (userController *UserController) Index(ctx *gin.Context) {
 		"code": code,
 		"data": data,
 		"msg":  error2.GetErrorMsg(code),
+		"demo":"test",
 	})
 
 }
