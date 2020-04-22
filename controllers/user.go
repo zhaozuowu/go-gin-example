@@ -1,20 +1,17 @@
 package controllers
 
 import (
-	"encoding/json"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/gin2/models"
+	"github.com/gin2/pkg/app"
 	error2 "github.com/gin2/pkg/error"
 	"github.com/gin2/pkg/logging"
-	"github.com/gin2/pkg/redis"
-	"github.com/gin2/pkg/setting"
 	"github.com/gin2/request"
 	"github.com/gin2/service"
 	"github.com/unknwon/com"
 	"log"
-	"strconv"
-	"strings"
+	"net/http"
 )
 
 type UserController struct {
@@ -40,94 +37,36 @@ type Result struct {
 func (userController *UserController) Index(ctx *gin.Context) {
 
 	requstParams := make(map[string]interface{})
-	data := make(map[string]interface{})
 	var userRequest request.UserListRequst
+	appG := app.Gin{ctx}
 	if err := ctx.ShouldBindQuery(&userRequest); err != nil {
 		code := error2.INVALID_PARAMS
-		ctx.JSON(code, gin.H{
-			"code":  code,
-			"data":  "",
-			"error": err.Error(),
-			"msg":   error2.GetErrorMsg(code),
-		})
+		appG.Response(http.StatusOK, code, nil)
 		return
 	}
+
+	valid := validation.Validation{}
+	valid.MinSize(userRequest.Name, 5, "name").Message("用户名称不能少于10个字符")
+	valid.MinSize(userRequest.Email, 5, "email").Message("邮箱长度不能少于10个字符")
+
+	if valid.HasErrors() {
+		app.MakeErrors(valid.Errors)
+		appG.Response(http.StatusOK, error2.INVALID_PARAMS, nil)
+		return
+	}
+
 	page := com.StrTo(ctx.DefaultQuery("page", "1")).MustInt()
 	requstParams["name"] = userRequest.Name
 	requstParams["email"] = userRequest.Email
-
-	offset := 0
-	offset = (page - 1) * setting.PageSize
-	if offset < 0 {
-		offset = 0
-	}
-	keys := []string{
-		error2.CACHE_USER_LIST,
-		"list",
-	}
-
-	if userRequest.Name != "" {
-		keys = append(keys, userRequest.Name)
-	}
-
-	if userRequest.Email != "" {
-		keys = append(keys, userRequest.Email)
-	}
-
-	if page > 0 {
-		keys = append(keys, strconv.Itoa(page))
-	}
-
-	redisKey := strings.Join(keys, "_")
-
-	cacheResult, err := redis.Get(redisKey)
+	userList, err := userController.userService.GetUserList(requstParams, page)
 
 	if err != nil {
-
+		logging.Error("GetUserList error",err)
+		appG.Response(http.StatusOK,error2.ERROR_GET_USERLIST_FAIL,nil)
+		return
 	}
-	var userList []models.User
-	var total int
 
-	err =  json.Unmarshal(cacheResult,&userList)
-
-	logging.Info("userList:",userList)
-	if userList == nil {
-		userModel := models.NewUserModel()
-		userList, err = userModel.GetUserList(offset, setting.PageSize, requstParams)
-		cacheValue ,err := json.Marshal(userList)
-		redis.Set(redisKey,cacheValue,0)
-		if err != nil {
-			code := error2.ERROR
-			ctx.JSON(code, gin.H{
-				"code":  code,
-				"data":  "",
-				"error": err.Error(),
-				"msg":   error2.GetErrorMsg(code),
-			})
-			return
-		}
-		total, err = userModel.GetUserTotalNum(requstParams)
-		if err != nil {
-			code := error2.ERROR
-			ctx.JSON(code, gin.H{
-				"code":  code,
-				"data":  "",
-				"error": err.Error(),
-				"msg":   error2.GetErrorMsg(code),
-			})
-			return
-		}
-
-	}
-	code := error2.SUCCESS
-	data["userList"] = userList
-	data["total"] = total
-	ctx.JSON(code, gin.H{
-		"code": code,
-		"data": data,
-		"msg":  error2.GetErrorMsg(code),
-		"demo":"test",
-	})
+	appG.Response(http.StatusOK,error2.SUCCESS,userList)
 
 }
 

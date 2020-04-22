@@ -12,6 +12,7 @@ var ErrorMsg = map[int]string{
 	ERROR_AUTH_CHECK_TOKEN_TIMEOUT:"token失效",
 	ERROR_AUTH:"权限校验失败",
 	ERROR_AUTH_TOKEN:"生成token失败",
+	ERROR_GET_USERLIST_FAIL:"获取用户列表错误",
 
 }
 

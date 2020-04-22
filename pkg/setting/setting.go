@@ -50,7 +50,7 @@ func LoadRedis() {
 
 func LoadApp() {
 
-	sec, err := Cfg.GetSection("app")
+	sec, err := Cfg.GetSection("redis")
 
 	if err != nil {
 		log.Fatalf("Fail to get section  'app':%v\n", err)

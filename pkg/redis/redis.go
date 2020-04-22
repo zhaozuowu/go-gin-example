@@ -16,6 +16,7 @@ func init() {
 		MaxActive:   setting.RedisMaxActive,
 		IdleTimeout: setting.RedisIdleTimeout,
 		Dial: func() (conn redis.Conn, err error) {
+			logging.Info("redisHost:",setting.RedisHost)
 			c, err := redis.Dial("tcp", setting.RedisHost)
 			if err != nil {
 				return nil, err
@@ -44,7 +45,7 @@ func Set(key string, data interface{}, time int) error {
 	if err != nil {
 		return err
 	}
-	_, err = con.Do("SET", key, value)
+	_, err = con.Do("SET", key, value,"EX",time)
 
 	if err != nil {
 		return err
@@ -73,7 +74,7 @@ func Get(key string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return reply, err
+	return reply, nil
 
 }
 
