@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/fvbock/endless"
 	"github.com/gin2/pkg/setting"
 	"github.com/gin2/routes"
-	"github.com/fvbock/endless"
-	"syscall"
 	"log"
+	"syscall"
 )
 
 // @title Golang Gin API
@@ -22,7 +22,9 @@ func main() {
 	endless.DefaultMaxHeaderBytes = 1 << 20
 	endPoint := fmt.Sprintf(":%d", setting.HttpPort)
 
-	routes := routes.NewUserRoute()
+	userRoute := routes.NewUserRoute()
+	authRoute := routes.NewAuthRoute()
+	routes.IncludeRoute(userRoute.LoadUser,authRoute.LoadAuthRoute)
 	server := endless.NewServer(endPoint, routes.InitRoute())
 	server.BeforeBegin = func(add string) {
 		log.Printf("Actual pid is %d", syscall.Getpid())

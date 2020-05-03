@@ -62,7 +62,7 @@ func (userService *UserService) GetUserList(requstParams map[string]interface{},
 	}
 	userList, err =  userService.userRepository.GetUserList(offset, setting.PageSize, requstParams)
 	if err != nil {
-		logging.Info(err, cacheResult)
+			logging.Info(err, cacheResult)
 		return nil,err
 	}
 
