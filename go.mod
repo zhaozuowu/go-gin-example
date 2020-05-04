@@ -3,6 +3,7 @@ module github.com/gin2
 go 1.13
 
 require (
+	github.com/DeanThompson/ginpprof v0.0.0-20190408063150-3be636683586
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/astaxie/beego v1.12.1
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect

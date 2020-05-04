@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/DeanThompson/ginpprof"
 	"github.com/gin-gonic/gin"
 	"github.com/gin2/pkg/setting"
 )
@@ -22,5 +23,6 @@ func InitRoute() *gin.Engine {
 	for _, handler := range routes {
 		handler(app)
 	}
+	ginpprof.Wrap(app)
 	return app
 }
