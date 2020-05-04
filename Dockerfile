@@ -1,7 +1,10 @@
 FROM golang:1.14-alpine as builder
 
-ENV GO111MODULE on
-ENV GOPROXY https://goproxy.cn,direct
+ENV GO111MODULE on  \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64 \
+    GOPROXY https://goproxy.cn,direct
 
 WORKDIR /working
 COPY . /working

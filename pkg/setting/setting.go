@@ -7,18 +7,18 @@ import (
 )
 
 var (
-	Cfg          *ini.File
-	HttpPort     int
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
-	RunMode      string
-	PageSize     int
-	JwtSecret    string
-	RedisHost    string
-	RedisPassword   string
+	Cfg              *ini.File
+	HttpPort         int
+	ReadTimeout      time.Duration
+	WriteTimeout     time.Duration
+	RunMode          string
+	PageSize         int
+	JwtSecret        string
+	RedisHost        string
+	RedisPassword    string
 	RedisMaxIdle     int
 	RedisMaxActive   int
-	RedisIdleTimeout  time.Duration
+	RedisIdleTimeout time.Duration
 )
 
 func init() {
