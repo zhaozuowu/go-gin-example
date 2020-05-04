@@ -37,8 +37,9 @@ type Result struct {
 func (userController *UserController) Index(ctx *gin.Context) {
 
 	requstParams := make(map[string]interface{})
-	var userRequest request.UserListRequst
+	//var userRequest request.UserListRequst
 	appG := app.Gin{ctx}
+	/*
 	if err := ctx.ShouldBindQuery(&userRequest); err != nil {
 		code := error2.INVALID_PARAMS
 		appG.Response(http.StatusOK, code, nil)
@@ -53,11 +54,11 @@ func (userController *UserController) Index(ctx *gin.Context) {
 		app.MakeErrors(valid.Errors)
 		appG.Response(http.StatusOK, error2.INVALID_PARAMS, nil)
 		return
-	}
+	}*/
 
 	page := com.StrTo(ctx.DefaultQuery("page", "1")).MustInt()
-	requstParams["name"] = userRequest.Name
-	requstParams["email"] = userRequest.Email
+	//requstParams["name"] = userRequest.Name
+	//requstParams["email"] = userRequest.Email
 	userList, err := userController.userService.GetUserList(requstParams, page)
 
 	if err != nil {
