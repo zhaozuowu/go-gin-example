@@ -70,7 +70,7 @@ func Get(key string) ([]byte, error) {
 	con := RedisConn.Get()
 	defer con.Close()
 	reply, err := redis.Bytes(con.Do("GET", key))
-	logging.Info("reply:",reply)
+	//logging.Info("reply:",reply)
 	if err != nil {
 		return nil, err
 	}
