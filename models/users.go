@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+//easyjson:json
 type User struct {
 	Model
 	ID        uint   `gorm:"primary key;not null;auto_incrment;comment:'主键'" json:"id"`
