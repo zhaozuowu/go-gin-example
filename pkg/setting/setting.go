@@ -76,5 +76,5 @@ func LoadServer() {
 }
 
 func LoadBase() {
-	RunMode = Cfg.Section("").Key("RUN_MODE").MustString("debug")
+	RunMode = Cfg.Section("").Key("RUN_MODE").MustString("release")
 }

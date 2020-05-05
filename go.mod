@@ -16,6 +16,7 @@ require (
 	github.com/go-openapi/swag v0.19.9 // indirect
 	github.com/golang/protobuf v1.4.0 // indirect
 	github.com/jinzhu/gorm v1.9.12
+	github.com/json-iterator/go v1.1.9
 	github.com/mailru/easyjson v0.7.1
 	github.com/robfig/cron v1.2.0
 	github.com/smartystreets/goconvey v1.6.4 // indirect
