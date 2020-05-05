@@ -3,13 +3,13 @@ package service
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"encoding/json"
 	"github.com/gin2/models"
 	error2 "github.com/gin2/pkg/error"
 	"github.com/gin2/pkg/logging"
 	"github.com/gin2/pkg/redis"
 	"github.com/gin2/pkg/setting"
 	"github.com/gin2/repository"
+	"github.com/json-iterator/go"   // 引入
 	"github.com/unknwon/com"
 	"strconv"
 	"strings"
@@ -56,7 +56,8 @@ func (userService *UserService) GetUserList(requstParams map[string]interface{},
 	}
 
 	var userList []models.User
-	json.Unmarshal(cacheResult, &userList)
+	//json.Unmarshal(cacheResult, &userList)
+	jsoniter.Unmarshal(cacheResult,&userList)
 	if userList != nil {
 		return userList, nil
 	}

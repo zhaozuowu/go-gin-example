@@ -1,10 +1,10 @@
 package redis
 
 import (
-	"encoding/json"
 	"github.com/garyburd/redigo/redis"
 	"github.com/gin2/pkg/logging"
 	"github.com/gin2/pkg/setting"
+	jsoniter "github.com/json-iterator/go"
 	"time"
 )
 
@@ -40,7 +40,8 @@ func Set(key string, data interface{}, time int) error {
 
 	con := RedisConn.Get()
 	defer con.Close()
-	value, err := json.Marshal(data)
+	//value, err := json.Marshal(data)
+	value,err := jsoniter.Marshal(data)
 
 	if err != nil {
 		return err
