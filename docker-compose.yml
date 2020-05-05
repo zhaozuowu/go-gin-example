@@ -13,6 +13,8 @@ services:
     volumes:
     - .:/working
     entrypoint: /bin/bash -c "CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /working/gin-blog-api /working/main.go && /working/gin-blog-api"
+    environment:
+      GIN_MODE: "release"
   go-gin-mysql:
     image: mysql:5.7
     container_name: go-gin-mysql

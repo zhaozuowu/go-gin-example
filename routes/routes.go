@@ -17,9 +17,8 @@ func IncludeRoute(route ...Route) {
 
 func InitRoute() *gin.Engine {
 
-	app := gin.Default()
 	gin.SetMode(setting.RunMode)
-
+	app := gin.Default()
 	for _, handler := range routes {
 		handler(app)
 	}

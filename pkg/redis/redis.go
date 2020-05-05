@@ -41,7 +41,8 @@ func Set(key string, data interface{}, time int) error {
 	con := RedisConn.Get()
 	defer con.Close()
 	//value, err := json.Marshal(data)
-	value,err := jsoniter.Marshal(data)
+	var json = jsoniter.ConfigCompatibleWithStandardLibrary
+	value,err := json.Marshal(data)
 
 	if err != nil {
 		return err

@@ -57,7 +57,8 @@ func (userService *UserService) GetUserList(requstParams map[string]interface{},
 
 	var userList []models.User
 	//json.Unmarshal(cacheResult, &userList)
-	jsoniter.Unmarshal(cacheResult,&userList)
+	var json = jsoniter.ConfigCompatibleWithStandardLibrary
+	json.Unmarshal(cacheResult,&userList)
 	if userList != nil {
 		return userList, nil
 	}
