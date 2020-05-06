@@ -44,7 +44,7 @@ func LoadRedis() {
 		log.Fatalf("Fail to get section  'redis':%v\n", err)
 	}
 
-	PageSize = sec.Key("PAGE_SIZE").MustInt(1000)
+	PageSize = sec.Key("PAGE_SIZE").MustInt(10)
 	JwtSecret = sec.Key("JWT_SECRET").MustString("23347$040412")
 }
 

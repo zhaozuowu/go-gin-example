@@ -9,7 +9,7 @@ import (
 	"github.com/gin2/pkg/redis"
 	"github.com/gin2/pkg/setting"
 	"github.com/gin2/repository"
-	"github.com/json-iterator/go"   // 引入
+	jsoniter "github.com/json-iterator/go"
 	"github.com/unknwon/com"
 	"strconv"
 	"strings"
@@ -51,17 +51,24 @@ func (userService *UserService) GetUserList(requstParams map[string]interface{},
 
 	cacheResult, err := redis.Get(cacheKey)
 
+	var userList []models.User
 	if err != nil {
 		logging.Info(err, cacheResult)
+
 	}
 
-	var userList []models.User
-	//json.Unmarshal(cacheResult, &userList)
-	var json = jsoniter.ConfigCompatibleWithStandardLibrary
-	json.Unmarshal(cacheResult,&userList)
-	if userList != nil {
-		return userList, nil
+	if err == nil {
+		destring := redis.Gzdecode(cacheResult)
+		var json = jsoniter.ConfigCompatibleWithStandardLibrary
+		json.Unmarshal(destring,&userList)
+		if userList != nil {
+			return userList, nil
+		}
 	}
+	//json.Unmarshal(cacheResult, &userList)
+	//var json = jsoniter.ConfigCompatibleWithStandardLibrary
+	//json.Unmarshal(cacheResult,&userList)
+
 	userList, err =  userService.userRepository.GetUserList(offset, setting.PageSize, requstParams)
 	if err != nil {
 			logging.Info(err, cacheResult)
