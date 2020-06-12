@@ -19,7 +19,7 @@ func (userRoute *UserRoute) LoadUser(e *gin.Engine)  {
 
 	e.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	group := e.Group("/users")
-	group.Use(userRoute.middleware.JwtTokenValidate)
+	//group.Use(userRoute.middleware.JwtTokenValidate)
 	group.GET("/", userRoute.userController.Index)
 	group.POST("/", userRoute.userController.Store)
 	group.GET("/:id", userRoute.userController.Show)

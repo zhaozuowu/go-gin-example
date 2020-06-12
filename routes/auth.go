@@ -20,15 +20,16 @@ func (authRoute *AuthRoute) LoadAuthRoute(e *gin.Engine) {
 	e.GET("/test", func(ctx *gin.Context) {
 
 
-		hystrix.ConfigureCommand("get_baidu", hystrix.CommandConfig{
+		hystrix.ConfigureCommand("get_baidu2", hystrix.CommandConfig{
 			Timeout:               100,
-			MaxConcurrentRequests: 1800,
-			ErrorPercentThreshold: 30,
+			MaxConcurrentRequests: 600,
+			ErrorPercentThreshold: 20,
 			SleepWindow:           5000,
+			RequestVolumeThreshold:20,
 		})
 
 		result =  map[string]interface{}{"code":200,"message":"成功","data":""}
-		 hystrix.Do("get_baidu", func() error {
+		 hystrix.Do("get_baidu2", func() error {
 			r := retrier.New(retrier.ConstantBackoff(3, 100*time.Millisecond), nil)
 			// retrier 工作模式和 hystrix 类似，在 Run 方法中将待执行的业务逻辑封装到匿名函数传入即可
 			err := r.Run(func() error {

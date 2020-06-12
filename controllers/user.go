@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"fmt"
+	"github.com/gin2/pkg/redis"
+	"github.com/afex/hystrix-go/hystrix"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/gin2/models"
@@ -9,8 +12,8 @@ import (
 	"github.com/gin2/pkg/logging"
 	"github.com/gin2/request"
 	"github.com/gin2/service"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/unknwon/com"
-	"log"
 	"net/http"
 )
 
@@ -157,31 +160,68 @@ func (userController *UserController) Store(ctx *gin.Context) {
 // @Success 200 object controllers.Result
 // @Router /users/:id [get]
 func (userController *UserController) Show(ctx *gin.Context) {
-
-	id := com.StrTo(ctx.Param("id")).MustInt()
-	valid := validation.Validation{}
-	valid.Required(id, "id").Message("id参数必传")
-	valid.Min(id, 1, "id").Message("id必须大于0")
 	code := error2.SUCCESS
 	result := map[string]interface{}{"code": code, "message": error2.GetErrorMsg(code), "data": ""}
-	if valid.HasErrors() {
-		code = error2.INVALID_PARAMS
-		for _, err := range valid.Errors {
-			//log.Fatalf("error key:%s, err message:%s\n", err.Key, err.Message)
-			log.Printf("error key:%s, err message:%s\n", err.Key, err.Message)
+
+	hystrix.ConfigureCommand(ctx.Request.URL.Path+"."+ctx.Request.Method, hystrix.CommandConfig{
+		Timeout:               100,
+		MaxConcurrentRequests: 600,
+		ErrorPercentThreshold: 10,
+		SleepWindow:           5000,
+		RequestVolumeThreshold:20,
+	})
+
+	hystrix.Do(ctx.Request.URL.Path+"."+ctx.Request.Method, func() error {
+
+		id := com.StrTo(ctx.Param("id")).MustInt()
+		valid := validation.Validation{}
+		valid.Required(id, "id").Message("id参数必传")
+		valid.Min(id, 1, "id").Message("id必须大于0")
+		if valid.HasErrors() {
+			code = error2.INVALID_PARAMS
+			for _, err := range valid.Errors {
+				//log.Fatalf("error key:%s, err message:%s\n", err.Key, err.Message)
+				logging.Error(fmt.Sprintf("error key:%s, err message:%s\n", err.Key, err.Message))
+			}
+			result["code"] = code
+			result["message"] = error2.GetErrorMsg(code)
+			ctx.JSON(200, result)
+			return nil
 		}
-		result["code"] = code
-		result["message"] = error2.GetErrorMsg(code)
+
+		cacheKey := fmt.Sprintf("seckill:v2:user:%d",id)
+		cacheResult, err := redis.Get(cacheKey)
+
+		var userInfo models.User
+		if err == nil {
+			destring := redis.Gzdecode(cacheResult)
+			var json = jsoniter.ConfigCompatibleWithStandardLibrary
+			json.Unmarshal(destring,&userInfo)
+			if userInfo.ID >0  {
+				result["data"] = userInfo
+				result["err"] = err
+				result["debug"] = "debug2"
+				ctx.JSON(200, result)
+				return nil
+			}
+		}
+		userModel := models.NewUserModel()
+		userInfo, err = userModel.GetUserInfoById(id)
+
+		 redis.Set(cacheKey,userInfo,error2.CACHE_EXPIRE_TIME)
+		result["data"] = userInfo
+		result["err"] = err
+		result["debug"] = "debug2"
 		ctx.JSON(200, result)
-		return
-	}
-	userModel := models.NewUserModel()
-	userInfo, err := userModel.GetUserInfoById(id)
-	result["data"] = userInfo
-	result["err"] = err
-	result["debug"] = "debug2"
-	ctx.JSON(200, result)
-	return
+		return nil
+
+	}, func(err error) error {
+		logging.Error("get an error,handle it", err,ctx.Request.URL.Path+"."+ctx.Request.Method)
+		result["code"] = error2.ERROR
+		result["err"] = err
+		ctx.JSON(200, result)
+		return nil
+	})
 
 }
 

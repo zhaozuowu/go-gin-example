@@ -22,6 +22,7 @@ func init() {
 			logging.Info("redisHost:",setting.RedisHost)
 			c, err := redis.Dial("tcp", setting.RedisHost)
 			if err != nil {
+				logging.Error("redisHost connect error:",err)
 				return nil, err
 			}
 			if setting.RedisPassword != "" {
